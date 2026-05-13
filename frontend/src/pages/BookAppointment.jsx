@@ -1,6 +1,6 @@
 import React, { useState } from "react"; // 1. Added useState
 import { useParams, useLocation, useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createAppointment } from "../services/appointmentsApi";
 import { CheckCircleOutlined } from "@ant-design/icons"; // Added success icon
 import {
@@ -18,6 +18,7 @@ const BookAppointment = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
+  const queryClient = useQueryClient();
 
   // Create an Ant Design form instance to programmatically control it
   const [form] = Form.useForm();
@@ -37,6 +38,8 @@ const BookAppointment = () => {
         duration: 5,
       });
 
+      // Invalidate the stale query cache completely
+      queryClient.invalidateQueries({ queryKey: ["appointments"] });
       form.resetFields(); // clear all input fields in the background
       setIsSuccessfullyBooked(true); // Switch the card UI to a clean success view
 
